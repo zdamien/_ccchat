@@ -13,7 +13,6 @@ socket_t Socket(int domain, int type, int protocol) {
 void Bind(socket_t socket, const struct sockaddr *address, socklen_t
         address_len) {
     int retval = bind(socket, address, address_len);
-    printf("bind %d %d %d\n",socket, retval, errno);
     if (retval < 0)
         throw std::system_error(errno, std::system_category());
 }
@@ -50,7 +49,10 @@ loop:
     if (retval < 0) {
         if (EINTR == errno) // interrupted, try again
             goto loop;
+        else if (EIO == errno) // filesystem problem
+           throw std::system_error(errno, std::system_category());
     }
+    // don't throw just for EBADF
      //   throw std::system_error(errno, std::system_category());
 }
 
@@ -78,8 +80,6 @@ void Inet_pton(int af, const char *src, void *dst) {
         throw std::logic_error("Inet_pton: invalid address family");
 }
 
-#include <cstdio>
-
 socket_t Tcp_Bind ( int port, int listeners) {
 
     socket_t listenfd = Socket ( AF_INET, SOCK_STREAM, 0);
@@ -93,17 +93,12 @@ socket_t Tcp_Bind ( int port, int listeners) {
     servaddr.sin_port = htons (port);
 
     try {
-        printf("t1 %d\n",listenfd);
         Bind (listenfd, (sockaddr *) &servaddr, address_len);
-        printf("t2\n");
         Listen (listenfd, listeners);
-        printf("t3\n");
     }
     catch (...) {
-        printf("te1\n");
 
         Close (listenfd);
-        printf("te2\n");
         throw;
     }
 

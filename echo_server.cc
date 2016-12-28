@@ -24,21 +24,14 @@ int main(int argc, char** argv) {
     socket_t listenfd, connfd;
     socklen_t clilen;
     pid_t child_pid;
-    struct sockaddr_in cliaddr, servaddr;
+    struct sockaddr_in cliaddr;
     int port = SERV_PORT;
 
     if (argc == 2)
         port = atoi (argv[1]);
 
     try {
-        listenfd = Socket (AF_INET, SOCK_STREAM, 0);
-        memset (&servaddr, 0, sizeof(servaddr));
-        servaddr.sin_family = AF_INET;
-        servaddr.sin_addr.s_addr = htonl (INADDR_ANY);
-        servaddr.sin_port = htons (port);
-
-        Bind (listenfd, (sockaddr *) &servaddr, sizeof(servaddr));
-        Listen (listenfd, 20);
+        listenfd = Tcp_Bind (port);
 
         while (true) {
             clilen = sizeof (cliaddr);
@@ -57,10 +50,10 @@ int main(int argc, char** argv) {
         }
     }
     catch (const std::exception& e) {
-        std::cout << "Exception: " << e.what() << "\n";
         Close (listenfd);
         Close (connfd);
 
+        std::cout << "Exception: " << e.what() << "\n";
     }
 }
 
