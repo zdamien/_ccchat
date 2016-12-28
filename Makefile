@@ -1,3 +1,6 @@
+ccchat: ccchat_main.cc exc_socket.cc exc_socket.h
+	g++ exc_socket.cc ccchat_main.cc -o ccchat
+
 tSQ: syn_queue.h tSQ.cc
 	g++ -l pthread tSQ.cc -o tSQ  
 
