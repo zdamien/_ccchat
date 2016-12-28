@@ -35,13 +35,13 @@ int main(int argc, char** argv) {
     socket_t connfd;
     socklen_t clilen;
     pid_t child_pid;
-    struct sockaddr_in cliaddr, servaddr;
     int port = SERV_PORT;
 
     if (argc == 3)
         port = atoi (argv[2]);
 
     try {
+        /*
         connfd = Socket (AF_INET, SOCK_STREAM, 0);
         memset (&servaddr, 0, sizeof(servaddr));
         servaddr.sin_family = AF_INET;
@@ -49,6 +49,8 @@ int main(int argc, char** argv) {
         inet_pton (AF_INET, argv[1], &servaddr.sin_addr);
 
         Connect (connfd, (sockaddr *) &servaddr, sizeof(servaddr));
+        */
+        connfd = Tcp_Connect (argv[1], port);
         str_cli (stdin, connfd);
 
     }

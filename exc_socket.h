@@ -11,6 +11,8 @@
 #include <arpa/inet.h>   /* inet(3) functions */
 
 #include <unistd.h>
+#include <string>
+using std::string;
 
 
 typedef int socket_t;  //might wrap file descriptors in a handle later
@@ -33,4 +35,9 @@ pid_t Fork ();
 
 pid_t Waitpid(pid_t pid, int *stat_loc, int options);
 
+void Inet_pton(int af, const char *src, void *dst);
+
+socket_t Tcp_Bind ( int port, int listeners=20);
+
+socket_t Tcp_Connect ( string address_s, int port) ;
 #endif
