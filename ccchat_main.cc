@@ -12,17 +12,8 @@ const string help_string = R"(Usage:
 )";
 
 void client (char* server, int port) {
-    struct sockaddr_in servaddr;
-    memset (&servaddr, 0, sizeof(servaddr));
-
-    socket_t sock = Socket ( AF_INET, SOCK_STREAM, 0);
+    socket_t sock = Tcp_Connect (server, port);
     try {
-        servaddr.sin_family = AF_INET;
-        servaddr.sin_port = port;
-        Inet_pton(AF_INET, server, &servaddr.sin_addr);
-
-        Connect (sock, (sockaddr *) &servaddr, sizeof(servaddr));
-
         //chat sock, ...
     }
     catch (...) {
@@ -34,33 +25,28 @@ void client (char* server, int port) {
 }
 
 void server (int port) {
-    struct sockaddr_in servaddr, cliaddr;
-    memset (&servaddr, 0, sizeof(servaddr));
+    struct sockaddr_in cliaddr;
 
-    socket_t listenfd = Socket ( AF_INET, SOCK_STREAM, 0);
-    socket_t client_sock;
+    socket_t listenfd = Tcp_Bind (port);
     try {
-        servaddr.sin_family = AF_INET;
-        servaddr.sin_addr.s_addr = htonl (INADDR_ANY);
-        servaddr.sin_port = htons (port);
-
-        Bind (listenfd, (sockaddr *) &servaddr, sizeof(servaddr));
-        Listen (listenfd, 20);
-
         while (true) {
-            unsigned int clilen = sizeof (cliaddr);
-            client_sock = Accept (listenfd, (sockaddr *) &cliaddr, &clilen);
+            socklen_t clilen = sizeof (cliaddr);
+            socket_t client_sock = Accept (listenfd, (sockaddr *) &cliaddr, &clilen);
+            try {
             // chat
+            }
+            catch (...) {
+                Close (client_sock);
+                throw;
+            }
             Close (client_sock);
         }
     }
     catch (...) {
         Close (listenfd);
-        Close (client_sock);
         throw;
     }
     Close (listenfd);
-    Close (client_sock);
 }
 
 int main(int argc, char** argv) {

@@ -72,8 +72,8 @@ pid_t Waitpid(pid_t pid, int *stat_loc, int options) {
         return retval;
 }
 
-void Inet_pton(int af, const char *src, void *dst) {
-    int retval = inet_pton (af, src, dst);
+void Inet_pton(int af, const string& src, void *dst) {
+    int retval = inet_pton (af, src.c_str(), dst);
     if (retval == 0) 
         throw std::runtime_error("Inet_pton: invalid network address");
     if (retval == -1)
@@ -106,7 +106,7 @@ socket_t Tcp_Bind ( int port, int listeners) {
 
 }
 
-socket_t Tcp_Connect ( string address_s, int port) {
+socket_t Tcp_Connect ( const string & address_s, int port) {
     socket_t connfd = Socket (AF_INET, SOCK_STREAM, 0);
 
     sockaddr_in servaddr; 
@@ -115,7 +115,7 @@ socket_t Tcp_Connect ( string address_s, int port) {
     memset (&servaddr, 0, address_len);
     servaddr.sin_family = AF_INET;
     servaddr.sin_port = htons (port);
-    Inet_pton (AF_INET, address_s.c_str(), &servaddr.sin_addr);
+    Inet_pton (AF_INET, address_s, &servaddr.sin_addr);
 
     try {
         Connect (connfd, (sockaddr *) &servaddr, address_len);

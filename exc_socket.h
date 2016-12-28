@@ -39,5 +39,7 @@ void Inet_pton(int af, const char *src, void *dst);
 
 socket_t Tcp_Bind ( int port, int listeners=20);
 
-socket_t Tcp_Connect ( string address_s, int port) ;
+socket_t Tcp_Connect ( const string & address_s, int port) ;
+
+
 #endif
