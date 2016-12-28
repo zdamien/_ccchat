@@ -1,5 +1,4 @@
 #include "exc_socket.h"
-#include <string>
 #include <system_error>
 
 socket_t Socket(int domain, int type, int protocol) {
@@ -42,3 +41,24 @@ void Connect(socket_t socket, const struct sockaddr *address, socklen_t
         throw std::system_error(errno, std::system_category());
 }
 
+void Close (socket_t socket) {
+    int retval = close (socket);
+    if (retval < 0)
+        throw std::system_error(errno, std::system_category());
+}
+
+pid_t Fork() {
+    int retval = fork();
+    if (retval < 0)
+        throw std::system_error(errno, std::system_category());
+    else
+        return retval;
+}
+
+pid_t Waitpid(pid_t pid, int *stat_loc, int options) {
+    int retval = waitpid (pid, stat_loc, options);
+    if (retval < 0)
+        throw std::system_error(errno, std::system_category());
+    else
+        return retval;
+}
