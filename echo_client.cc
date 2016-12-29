@@ -9,6 +9,8 @@
 #include <cstring>
 #include <unistd.h>
 
+//#include <netdb.h>
+
 const int SERV_PORT = 4000;
 
 void str_echo (socket_t sockfd) {
@@ -41,16 +43,24 @@ int main(int argc, char** argv) {
         port = atoi (argv[2]);
 
     try {
+
         /*
         connfd = Socket (AF_INET, SOCK_STREAM, 0);
+        sockaddr_in servaddr;
         memset (&servaddr, 0, sizeof(servaddr));
         servaddr.sin_family = AF_INET;
         servaddr.sin_port = htons (port);
-        inet_pton (AF_INET, argv[1], &servaddr.sin_addr);
-
+        int rv = inet_pton (AF_INET, argv[1], &servaddr.sin_addr);
+        {
+            char buf[4096];
+            printf("rv %d %s\n",rv,inet_ntop(AF_INET,
+                        &servaddr.sin_addr, buf, 4096));
+        }
         Connect (connfd, (sockaddr *) &servaddr, sizeof(servaddr));
         */
+
         connfd = Tcp_Connect (argv[1], port);
+
         str_cli (stdin, connfd);
 
     }
