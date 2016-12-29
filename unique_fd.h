@@ -3,6 +3,8 @@
 
 #include <errno.h>
 #include <unistd.h>
+#include <utility>
+using std::move;
 
 class unique_fd {
     int fd;
